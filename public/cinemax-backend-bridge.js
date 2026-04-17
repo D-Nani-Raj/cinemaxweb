@@ -30,8 +30,17 @@
       credentials: "include"
     }).then(async function (response) {
       var text = await response.text();
-      var payload = text ? JSON.parse(text) : {};
-      if (!response.ok) throw new Error(payload.error || "Request failed.");
+      var payload = {};
+      if (text) {
+        try {
+          payload = JSON.parse(text);
+        } catch (error) {
+          payload = { error: text };
+        }
+      }
+      if (!response.ok) {
+        throw new Error(payload.error || ("Request failed (" + response.status + ")."));
+      }
       return payload;
     });
   }
@@ -461,7 +470,7 @@
     var activeTab = S.addVsrcTab || "url";
 
     try {
-      if (activeTab === "file" && amFileInp && amFileInp.files && amFileInp.files[0]) {
+      if (amFileInp && amFileInp.files && amFileInp.files[0]) {
         var uploadedMovie = await uploadFile(amFileInp.files[0]);
         videoUrl = uploadedMovie.url;
         videoType = "file";
@@ -498,11 +507,15 @@
       videoType: videoType
     };
 
-    await window.addCustomMovie(movie);
-    S.adminAddGenres = [];
-    S.adminSection = "movies";
-    toast('Movie "' + movie.title + '" added!');
-    R();
+    try {
+      await window.addCustomMovie(movie);
+      S.adminAddGenres = [];
+      S.adminSection = "movies";
+      toast('Movie "' + movie.title + '" added!');
+      R();
+    } catch (error) {
+      if (err) err.textContent = error.message || "Failed to add movie.";
+    }
   };
 
   window.saveEditMovie = async function () {
@@ -536,7 +549,7 @@
     try {
       var emFileInp = document.getElementById("em-fileinput");
       var emUrlInp = document.getElementById("em-videourl");
-      if (S.editVsrcTab === "file" && emFileInp && emFileInp.files && emFileInp.files[0]) {
+      if (emFileInp && emFileInp.files && emFileInp.files[0]) {
         var uploadedMovie = await uploadFile(emFileInp.files[0]);
         videoUrl = uploadedMovie.url;
         videoType = "file";
@@ -572,10 +585,14 @@
       videoUrl: videoUrl,
       videoType: videoType
     });
-    await window.updateMovie(updated);
-    closeEditModal();
-    toast("Movie updated!");
-    R();
+    try {
+      await window.updateMovie(updated);
+      closeEditModal();
+      toast("Movie updated!");
+      R();
+    } catch (error) {
+      if (err) err.textContent = error.message || "Failed to save changes.";
+    }
   };
 
   document.addEventListener("DOMContentLoaded", async function () {
