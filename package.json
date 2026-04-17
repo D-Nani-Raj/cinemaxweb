@@ -1,0 +1,10 @@
+{
+  "name": "cinimax-online-movie-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack movie website with persistent storage and admin movie management",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
