@@ -5,8 +5,8 @@ const crypto = require("crypto");
 
 const PORT = Number(process.env.PORT) || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
-const DATA_DIR = path.join(__dirname, "data");
-const UPLOADS_DIR = path.join(__dirname, "uploads");
+const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, "data"));
+const UPLOADS_DIR = path.resolve(process.env.UPLOADS_DIR || path.join(__dirname, "uploads"));
 const DB_FILE = path.join(DATA_DIR, "db.json");
 const SESSION_COOKIE = "cinimax_session";
 

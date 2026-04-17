@@ -66,6 +66,27 @@ docker run -p 3000:3000 -v /your/persistent/data:/app/data -v /your/persistent/u
 
 Those mounted folders make uploaded movies and posters survive container restarts.
 
+### Option 3: Render
+
+This project includes a `render.yaml` for Render deployment with a persistent disk.
+
+Note: Render persistent disks require a paid web service. A Free web service will run, but uploaded posters, videos, and `db.json` data will be lost whenever the service restarts, redeploys, or spins down.
+
+1. Push the project to GitHub
+2. In Render, choose `New +` -> `Blueprint`
+3. Select this repository
+4. Render will create:
+   - a Node web service
+   - a persistent disk mounted at `/var/data/cinemax`
+5. Deploy
+
+The app will store:
+
+- movie records in `/var/data/cinemax/data/db.json`
+- uploaded posters and videos in `/var/data/cinemax/uploads`
+
+That means admin-added movies survive restarts and redeploys on Render.
+
 ## Admin usage
 
 1. Log in as admin
