@@ -508,6 +508,7 @@
     };
 
     try {
+      toast("Adding movie...");
       await window.addCustomMovie(movie);
       S.adminAddGenres = [];
       S.adminSection = "movies";
@@ -515,6 +516,7 @@
       R();
     } catch (error) {
       if (err) err.textContent = error.message || "Failed to add movie.";
+      try { alert(error.message || "Failed to add movie."); } catch (e) {}
     }
   };
   window.adminAddMovie = window.__bridgeAdminAddMovie;
@@ -587,12 +589,14 @@
       videoType: videoType
     });
     try {
+      toast("Saving changes...");
       await window.updateMovie(updated);
       closeEditModal();
       toast("Movie updated!");
       R();
     } catch (error) {
       if (err) err.textContent = error.message || "Failed to save changes.";
+      try { alert(error.message || "Failed to save changes."); } catch (e) {}
     }
   };
   window.saveEditMovie = window.__bridgeSaveEditMovie;
