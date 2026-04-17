@@ -30,17 +30,8 @@
       credentials: "include"
     }).then(async function (response) {
       var text = await response.text();
-      var payload = {};
-      if (text) {
-        try {
-          payload = JSON.parse(text);
-        } catch (error) {
-          payload = { error: text };
-        }
-      }
-      if (!response.ok) {
-        throw new Error(payload.error || ("Request failed (" + response.status + ")."));
-      }
+      var payload = text ? JSON.parse(text) : {};
+      if (!response.ok) throw new Error(payload.error || "Request failed.");
       return payload;
     });
   }
@@ -443,7 +434,7 @@
     R();
   };
 
-  window.__bridgeAdminAddMovie = async function () {
+  window.adminAddMovie = async function () {
     var title = (document.getElementById("am-title") || {}).value || "";
     var year = +(document.getElementById("am-year") || {}).value || 0;
     var rating = +(document.getElementById("am-rating") || {}).value || 0;
@@ -470,7 +461,7 @@
     var activeTab = S.addVsrcTab || "url";
 
     try {
-      if (amFileInp && amFileInp.files && amFileInp.files[0]) {
+      if (activeTab === "file" && amFileInp && amFileInp.files && amFileInp.files[0]) {
         var uploadedMovie = await uploadFile(amFileInp.files[0]);
         videoUrl = uploadedMovie.url;
         videoType = "file";
@@ -507,21 +498,14 @@
       videoType: videoType
     };
 
-    try {
-      toast("Adding movie...");
-      await window.addCustomMovie(movie);
-      S.adminAddGenres = [];
-      S.adminSection = "movies";
-      toast('Movie "' + movie.title + '" added!');
-      R();
-    } catch (error) {
-      if (err) err.textContent = error.message || "Failed to add movie.";
-      try { alert(error.message || "Failed to add movie."); } catch (e) {}
-    }
+    await window.addCustomMovie(movie);
+    S.adminAddGenres = [];
+    S.adminSection = "movies";
+    toast('Movie "' + movie.title + '" added!');
+    R();
   };
-  window.adminAddMovie = window.__bridgeAdminAddMovie;
 
-  window.__bridgeSaveEditMovie = async function () {
+  window.saveEditMovie = async function () {
     var id = S.editMovieId;
     var m = gM(id);
     if (!m) return;
@@ -552,7 +536,7 @@
     try {
       var emFileInp = document.getElementById("em-fileinput");
       var emUrlInp = document.getElementById("em-videourl");
-      if (emFileInp && emFileInp.files && emFileInp.files[0]) {
+      if (S.editVsrcTab === "file" && emFileInp && emFileInp.files && emFileInp.files[0]) {
         var uploadedMovie = await uploadFile(emFileInp.files[0]);
         videoUrl = uploadedMovie.url;
         videoType = "file";
@@ -588,18 +572,11 @@
       videoUrl: videoUrl,
       videoType: videoType
     });
-    try {
-      toast("Saving changes...");
-      await window.updateMovie(updated);
-      closeEditModal();
-      toast("Movie updated!");
-      R();
-    } catch (error) {
-      if (err) err.textContent = error.message || "Failed to save changes.";
-      try { alert(error.message || "Failed to save changes."); } catch (e) {}
-    }
+    await window.updateMovie(updated);
+    closeEditModal();
+    toast("Movie updated!");
+    R();
   };
-  window.saveEditMovie = window.__bridgeSaveEditMovie;
 
   document.addEventListener("DOMContentLoaded", async function () {
     var addPosterField = document.getElementById("am-poster");

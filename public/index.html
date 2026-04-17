@@ -1581,9 +1581,6 @@ function renderEditForm(m,selG){
   '</div>'
 }
 async function saveEditMovie(){
-  if(window.__bridgeSaveEditMovie){
-    return window.__bridgeSaveEditMovie();
-  }
   var id=S.editMovieId;var m=gM(id);if(!m)return;
   var title=(document.getElementById('em-title')||{}).value||'';
   var year=+(document.getElementById('em-year')||{}).value||0;
@@ -2041,9 +2038,6 @@ function toggleAdminGenre(g){
 }
 
 async function adminAddMovie(){
-  if(window.__bridgeAdminAddMovie){
-    return window.__bridgeAdminAddMovie();
-  }
   var title=(document.getElementById('am-title')||{}).value||'';
   var year=+(document.getElementById('am-year')||{}).value||0;
   var rating=+(document.getElementById('am-rating')||{}).value||0;
