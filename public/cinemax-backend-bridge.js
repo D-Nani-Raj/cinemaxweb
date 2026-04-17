@@ -443,7 +443,7 @@
     R();
   };
 
-  window.adminAddMovie = async function () {
+  window.__bridgeAdminAddMovie = async function () {
     var title = (document.getElementById("am-title") || {}).value || "";
     var year = +(document.getElementById("am-year") || {}).value || 0;
     var rating = +(document.getElementById("am-rating") || {}).value || 0;
@@ -517,8 +517,9 @@
       if (err) err.textContent = error.message || "Failed to add movie.";
     }
   };
+  window.adminAddMovie = window.__bridgeAdminAddMovie;
 
-  window.saveEditMovie = async function () {
+  window.__bridgeSaveEditMovie = async function () {
     var id = S.editMovieId;
     var m = gM(id);
     if (!m) return;
@@ -594,6 +595,7 @@
       if (err) err.textContent = error.message || "Failed to save changes.";
     }
   };
+  window.saveEditMovie = window.__bridgeSaveEditMovie;
 
   document.addEventListener("DOMContentLoaded", async function () {
     var addPosterField = document.getElementById("am-poster");
